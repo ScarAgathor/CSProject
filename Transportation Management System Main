@@ -1,2 +1,56 @@
-int main()
-//Test
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+void getUserType(int* userType);
+void displayMenu(int userType);
+void selectOption(int userType, int option);
+
+int main() {
+    int userType = 0;
+
+    getUserType(&userType);
+    displayMenu(userType);
+
+    return 0;
+}
+
+void getUserType(int* userType) {
+        printf("Please Enter 1 for Agent \n or 2 for Customer:\n");
+        scanf("%d", userType);
+}
+
+void displayMenu(int userType) {
+    int option;
+    switch (userType)
+    {
+    case 1: //Agent
+        printf("Hello Agent.\n");
+        printf("Main Menu Options:\n");
+        printf("1. Manage Routes\n");
+        printf("2. Manage Vehicles\n");
+        printf("3. Manage Routes\n");
+        printf("Please Select an Option: ");
+        scanf("%d", &option);
+        selectOption(userType, option);
+        break;
+    case 2: //Cusomer
+        printf("Hello Dear Customer.\n");
+        printf("Main Menu Options:\n");
+        printf("1. Book Reservations\n");
+        printf("2. Book Vehicle\n");
+        printf("Please Select an Option: ");
+        scanf("%d", &option);
+        selectOption(userType, option);
+        break;
+    default:
+        while(userType != 1 && userType != 2) {
+            printf("You Entered an Invalid option\n");
+            getUserType(&userType);
+            displayMenu(userType);
+        }
+        break;
+    }
+}
+
+void selectOption(int userType, int option){
