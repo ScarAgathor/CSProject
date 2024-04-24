@@ -6,6 +6,7 @@ void getUserType(int* userType);
 void displayMenu(int userType);
 void selectOption(int userType, int option);
 
+
 int main() {
     int userType = 0;
 
@@ -16,8 +17,11 @@ int main() {
 }
 
 void getUserType(int* userType) {
-        printf("Please Enter 1 for Agent \n or 2 for Customer:\n");
-        scanf("%d", userType);
+    printf("Please Enter Your User Information\n");
+    printf("1 - Agent\n");
+    printf("2 - Customer\n");
+    printf("UserType: ");
+    scanf("%d", userType);
 }
 
 void displayMenu(int userType) {
@@ -54,3 +58,42 @@ void displayMenu(int userType) {
 }
 
 void selectOption(int userType, int option){
+    if(userType == 1) {
+        switch (option) {
+        case 1:
+        printf("Agent option 1");
+            //call Manage Routes Function
+            //shouyld caome from san antonio
+            //shoyld be able to enter destination, miles, hrs
+            //Should be able calculate price 
+            break;
+        case 2:
+        printf("Agent option 2");
+            //call Manage Flights Function.
+            break;
+        case 3:
+        printf("Agent option 3");
+            //call 
+        default:
+            printf("Invalid Option\n");
+            displayMenu(userType);
+            break;
+        }
+    }
+    if(userType == 2) {
+        switch (option) {
+        case 1:
+        printf("Customer Option 1");
+            //call bookReservations Function
+            break;
+        case 2:
+        printf("customer option 2");
+            //call book Vehicles Function.
+            break;
+        default:
+            printf("Invalid Option\n");
+            displayMenu(userType);
+            break;
+        }
+    }
+}
