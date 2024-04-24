@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
-#include <stdlib.h>
+
 void getUserType(int* userType);
 void displayMenu(int userType);
 void selectOption(int userType, int option);
-
+//void manageDestinations();
 
 int main() {
     int userType = 0;
@@ -24,76 +23,71 @@ void getUserType(int* userType) {
     scanf("%d", userType);
 }
 
+//Add more options later
 void displayMenu(int userType) {
     int option;
-    switch (userType)
-    {
-    case 1: //Agent
-        printf("Hello Agent.\n");
-        printf("Main Menu Options:\n");
-        printf("1. Manage Routes\n");
-        printf("2. Manage Vehicles\n");
-        printf("3. Manage Routes\n");
-        printf("Please Select an Option: ");
-        scanf("%d", &option);
-        selectOption(userType, option);
-        break;
-    case 2: //Cusomer
-        printf("Hello Dear Customer.\n");
-        printf("Main Menu Options:\n");
-        printf("1. Book Reservations\n");
-        printf("2. Book Vehicle\n");
-        printf("Please Select an Option: ");
-        scanf("%d", &option);
-        selectOption(userType, option);
-        break;
-    default:
-        while(userType != 1 && userType != 2) {
-            printf("You Entered an Invalid option\n");
-            getUserType(&userType);
-            displayMenu(userType);
+    do{
+        switch (userType)
+        {
+        case 1: //Agent
+            printf("Main Menu\n");
+            printf("Hello Agent.\n");
+            printf("Main Menu Options:\n");
+            printf("1. Manage Routes\n");
+            printf("2. Manage Flights\n");
+            printf("3. Quit\n");
+            printf("Please Select an Option: ");
+            scanf("%d", &option);
+            selectOption(userType, option);
+            break;
+        case 2: //Customer
+            printf("Main Menu\n");
+            printf("Hello Dear Customer.\n");
+            printf("Main Menu Options:\n");
+            printf("1. Book Reservations\n");
+            printf("2. Book Vehicle\n");
+            printf("3. Quit\n");
+            printf("Please Select an Option: ");
+            scanf("%d", &option);
+            selectOption(userType, option);
+            break;
+        default:
+            while(userType != 1 && userType != 2) {
+                printf("You Entered an Invalid option\n");
+                getUserType(&userType);
+                displayMenu(userType);
+            }
+            break;
         }
-        break;
-    }
+    } while (option < 3);
 }
 
-void selectOption(int userType, int option){
-    if(userType == 1) {
+void selectOption(int userType, int option) {
+    if(userType == 1) { //Agent
         switch (option) {
         case 1:
-        printf("Agent option 1");
-            //call Manage Routes Function
-            //shouyld caome from san antonio
-            //shoyld be able to enter destination, miles, hrs
-            //Should be able calculate price 
+            printf("Agent option 1 - ManageRoutes");
+            //call ManageROutes function.
             break;
         case 2:
-        printf("Agent option 2");
+            printf("Agent option 2 - ManageFLights");
             //call Manage Flights Function.
             break;
-        case 3:
-        printf("Agent option 3");
-            //call 
-        default:
-            printf("Invalid Option\n");
-            displayMenu(userType);
-            break;
+        //Think about adding a default.
         }
     }
     if(userType == 2) {
         switch (option) {
         case 1:
-        printf("Customer Option 1");
+            printf("Customer Option 1 - book reservations");
             //call bookReservations Function
             break;
         case 2:
-        printf("customer option 2");
-            //call book Vehicles Function.
+            printf("customer option 2 - book flight");
+            //call book flights Function.
             break;
-        default:
-            printf("Invalid Option\n");
-            displayMenu(userType);
-            break;
+        //Think about adding a default.
         }
     }
 }
+
