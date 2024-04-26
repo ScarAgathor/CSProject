@@ -1,3 +1,20 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_FLIGHTS 100
+#define MAX_STR_LEN 50
+
+#define PRICE_PER_MILE 0.94
+
+typedef struct {
+    char destination[100];
+    char typeOfFlight[100];
+    int hrs;
+    int miles;
+    float price;
+} Flight;
+
 void addFlights(Flight flights[], int *num_flights);
 
 //void readFlightsToFile(Flight flights[], int *num_flights);
@@ -67,19 +84,3 @@ void addFlights(Flight flights[], int *num_flights) {
 }
 
 
-/*void readFlightsToFile(Flight flights[], int *num_flights) {
-    char filename[] = "flights.csv";
-    FILE *file = fopen("flights.csv", "r");
-
-    if(!file) {
-        printf("Error Opening file %s.\n", filename);
-        exit(1);
-    }
-
-    //Read date from flights to fill flight array
-    char line[MAX_STR_LEN * 3];
-    while(fgets(line, sizeof(line), file) != NULL && num_flights < MAX_FLIGHTS) {
-        //strtok();
-    }
-
-}*/
