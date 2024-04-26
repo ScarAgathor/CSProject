@@ -17,7 +17,11 @@ typedef struct {
 
 void addFlights(Flight flights[], int *num_flights);
 
-//void readFlightsToFile(Flight flights[], int *num_flights);
+//void getFlights(Flight flights[], int num_flights);//function for customers to see flights.
+
+void searchFlights(Flight flights[], int num_flights);//function to search flights based on user input of destination.
+
+
 
 int main() {
     
@@ -25,17 +29,10 @@ int main() {
     int num_flights = 0;
 
     addFlights(flights, &num_flights);
-    //readFlightsToFile(flights, &num_flights);
 
-    for(int i = 0; i < num_flights; i++) {
-        printf("\nFlight %d\n", i+1);
-        printf("Destination: %s\n",flights[i].destination);
-        printf("Type of Flight: %s\n",flights[i].typeOfFlight);
-        printf("Hours of Flight: %d hours.\n",flights[i].hrs);
-        printf("Miles of Flight: %d miles.\n",flights[i].miles);
-        printf("Price of Flight: $%.2f\n",flights[i].price);
-    }
-    
+    //getFlights(flights, num_flights);
+
+    searchFlights(flights, num_flights);
 
     return 0;
 }
@@ -45,16 +42,11 @@ void addFlights(Flight flights[], int *num_flights) {
     char typeOfFlight[100];
     int hrs;
     int miles;
-    float price;
-
-    
-
+    int price;
     char decision[5];
 
-    
     do
     {
-
         printf("Enter destination: ");
         scanf("%s", destination);
         printf("Enter type of flight: ");
@@ -74,7 +66,6 @@ void addFlights(Flight flights[], int *num_flights) {
 
         printf("\nDo you wish to add another flight: ");
         scanf("%s", decision);
-
     }   while (strcmp(decision, "yes") == 0);
         
     if(strcmp(decision, "yes") != 0) {
@@ -83,4 +74,51 @@ void addFlights(Flight flights[], int *num_flights) {
 
 }
 
+/*void getFlights(Flight flights[], int num_flights) {
+    for(int i = 0; i < num_flights; i++) {
+            printf("\nFlight %d\n", i+1);
+            printf("Destination: %s\n",flights[i].destination);
+            printf("Type of Flight: %s\n",flights[i].typeOfFlight);
+            printf("Hours of Flight: %d hours.\n",flights[i].hrs);
+            printf("Miles of Flight: %d miles.\n",flights[i].miles);
+            printf("Price of Flight: $%.2f\n",flights[i].price);
+        }
+}*/
 
+void searchFlights(Flight flights[], int num_flights) {
+
+    char userDest[10];
+    char availableDest[10];
+
+    printf("\nEnter your destination: ");
+    scanf("%s", userDest);
+
+    int num_found_flights = 0;
+
+    Flight foundFlights[MAX_FLIGHTS];
+
+    for(int i = 0; i < num_flights; i++) {
+        strcpy(flights[i].destination, availableDest);
+        if (strcmp(userDest, availableDest) == 0);
+        {
+            strcpy(foundFlights[num_found_flights].destination, flights[i].destination); 
+            strcpy(foundFlights[num_found_flights].typeOfFlight, flights[i].typeOfFlight); 
+            foundFlights[num_found_flights].hrs = flights[i].hrs;
+            foundFlights[num_found_flights].miles = flights[i].miles;
+            foundFlights[num_found_flights].price = flights[i].price;;
+
+            //foundFlights[num_found_flights] = flights[i];
+            num_found_flights++;
+        }
+    }
+
+    for(int i = 0; i < num_found_flights; i++) {
+        printf("\nFlight %d\n", i+1);
+        printf("Destination: %s\n",foundFlights[i].destination);
+        /*printf("Type of Flight: %s\n",foundFlights[i].typeOfFlight);
+        printf("Hours of Flight: %d hours.\n",foundFlights[i].hrs);
+        printf("Miles of Flight: %d miles.\n",foundFlights[i].miles);
+        printf("Price of Flight: $%.2f\n",foundFlights[i].price);*/
+    
+    }
+}
