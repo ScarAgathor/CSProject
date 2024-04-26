@@ -1,0 +1,85 @@
+void addFlights(Flight flights[], int *num_flights);
+
+//void readFlightsToFile(Flight flights[], int *num_flights);
+
+int main() {
+    
+    Flight flights[MAX_FLIGHTS];
+    int num_flights = 0;
+
+    addFlights(flights, &num_flights);
+    //readFlightsToFile(flights, &num_flights);
+
+    for(int i = 0; i < num_flights; i++) {
+        printf("\nFlight %d\n", i+1);
+        printf("Destination: %s\n",flights[i].destination);
+        printf("Type of Flight: %s\n",flights[i].typeOfFlight);
+        printf("Hours of Flight: %d hours.\n",flights[i].hrs);
+        printf("Miles of Flight: %d miles.\n",flights[i].miles);
+        printf("Price of Flight: $%.2f\n",flights[i].price);
+    }
+    
+
+    return 0;
+}
+
+void addFlights(Flight flights[], int *num_flights) {
+    char destination[100];
+    char typeOfFlight[100];
+    int hrs;
+    int miles;
+    float price;
+
+    
+
+    char decision[5];
+
+    
+    do
+    {
+
+        printf("Enter destination: ");
+        scanf("%s", destination);
+        printf("Enter type of flight: ");
+        scanf("%s", typeOfFlight);
+        printf("Enter hrs: ");
+        scanf("%d", &hrs);
+        printf("Enter miles: ");
+        scanf("%d", &miles);
+
+        strcpy(flights[*num_flights].destination, destination); 
+        strcpy(flights[*num_flights].typeOfFlight, typeOfFlight);
+        flights[*num_flights].hrs = hrs;
+        flights[*num_flights].miles = miles;
+        price = flights[*num_flights].miles * PRICE_PER_MILE; 
+        flights[*num_flights].price = price;
+        (*num_flights)++;
+
+        printf("\nDo you wish to add another flight: ");
+        scanf("%s", decision);
+
+    }   while (strcmp(decision, "yes") == 0);
+        
+    if(strcmp(decision, "yes") != 0) {
+        printf("End of add flights function\n");
+    }
+
+}
+
+
+/*void readFlightsToFile(Flight flights[], int *num_flights) {
+    char filename[] = "flights.csv";
+    FILE *file = fopen("flights.csv", "r");
+
+    if(!file) {
+        printf("Error Opening file %s.\n", filename);
+        exit(1);
+    }
+
+    //Read date from flights to fill flight array
+    char line[MAX_STR_LEN * 3];
+    while(fgets(line, sizeof(line), file) != NULL && num_flights < MAX_FLIGHTS) {
+        //strtok();
+    }
+
+}*/
