@@ -1,0 +1,5 @@
+TX, passenger, 3, 450, 9329
+Win, passenger, 4, 686, 383
+TX, cargo, 67, 576, 383
+TX, cargo, 44554, 4483, 4214.02
+TX, pass, 3324, 44585, 41909.90
