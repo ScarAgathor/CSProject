@@ -9,8 +9,9 @@
 
 #define PRICE_PER_MILE 0.94
 
-typedef struct {
+typedef struct {//use to add characterisitic to the flights
     int flightId;
+    char origin[100];
     char destination[100];
     char typeOfFlight[100];
     int hrs;
@@ -52,7 +53,7 @@ void displayMenu(int userType) {
             printf("Main Menu\n");
             printf("Hello Agent.\n");
             printf("Main Menu Options:\n"); //Add more options later
-            printf("1. Manage Routes\n");
+            printf("1. Manage Flights\n");
             printf("2. Quit\n");
             printf("Please Select an Option: ");
             scanf("%d", &option);
@@ -107,7 +108,7 @@ void addFlights(Flight flights[], int *num_flights) {
 
     char decision[5];
 
-    do
+    do //ADd flights to the flight array
     {
         printf("Enter destination: ");
         scanf("%s", destination);
@@ -131,7 +132,7 @@ void addFlights(Flight flights[], int *num_flights) {
 
     }   while (strcmp(decision, "yes") == 0);
         
-    char filename[] = "flights.csv";
+    char filename[] = "flights.txt";
     FILE *file = fopen(filename, "a");
 
     if (file == NULL) {
@@ -154,16 +155,21 @@ void addFlights(Flight flights[], int *num_flights) {
 void searchFlights(Flight flights[], int *num_flights) {
 
     char filename[] = "flights.txt";
-
     FILE *file = fopen(filename, "r");
+
     if (file == NULL) {
         printf("Error opening file %s.\n", filename);
         exit(1);
     }
 
-    char line[MAX_STR_LEN * 4];
+    char line[MAX_STR_LEN * 7]; //It is multipled by the number of items in a line
+    //The rest of this block breaks the line into different parts and puts them in flight array
     while (fgets(line, sizeof(line), file) != NULL && *num_flights < MAX_FLIGHTS) {
         char *token = strtok(line, ", ");
+        flights[*num_flights].flightId = atoi(token);
+        token = strtok(NULL, ", ");
+        strncpy(flights[*num_flights].origin, token, MAX_STR_LEN - 1);
+        token = strtok(NULL, ", ");
         strncpy(flights[*num_flights].destination, token, MAX_STR_LEN - 1);
         token = strtok(NULL, ", ");
         strncpy(flights[*num_flights].typeOfFlight, token, MAX_STR_LEN - 1);
@@ -179,30 +185,37 @@ void searchFlights(Flight flights[], int *num_flights) {
     fclose(file);
 
     Flight foundFlights[MAX_FLIGHTS];
+    char userOrigin[10];
     char userDest[10];
 
-    printf("\nEnter your destination: ");
+    printf("\nEnter your origin: ");
+    scanf("%s", userOrigin);
+    printf("Enter your desired destination: ");
     scanf("%s", userDest);
 
     int num_found_flights = 0;
 
-        for(int i = 0; i < *num_flights; i++) {
-            if (strcmp(userDest, flights[i].destination) == 0) {
-                foundFlights[num_found_flights].flightId = num_found_flights + 1;
-                strcpy(foundFlights[num_found_flights].destination, flights[i].destination);
-                strcpy(foundFlights[num_found_flights].typeOfFlight, flights[i].typeOfFlight); 
-                foundFlights[num_found_flights].hrs = flights[i].hrs;
-                foundFlights[num_found_flights].miles = flights[i].miles;
-                foundFlights[num_found_flights].price = flights[i].price;
-                num_found_flights++;
-            }
+    for(int i = 0; i < *num_flights; i++) { //searching for flights that match the criteria and filling up thew found flights array
+        if ((strcmp(flights[i].origin, userOrigin) == 0) || (strcmp(flights[i].destination, userDest) == 0)) {
+            foundFlights[num_found_flights].flightId = num_found_flights + 1;
+            strcpy(foundFlights[num_found_flights].origin, flights[i].origin);
+            strcpy(foundFlights[num_found_flights].destination, flights[i].destination);
+            strcpy(foundFlights[num_found_flights].typeOfFlight, flights[i].typeOfFlight);
+            foundFlights[num_found_flights].hrs = flights[i].hrs;
+            foundFlights[num_found_flights].miles = flights[i].miles;
+            foundFlights[num_found_flights].price = flights[i].price;
+            num_found_flights++;    
         }
-        
-        printf("ID | Destination | Flight Type | Hours | Miles | Price ");
-
+    }    
+     
+    if(num_found_flights > 0) {
+        printf("Id\tOrigin\tDestination\tFlight Type\tHours\tMiles\tPrice\n");//Printing a table of availabel flights
         for(int i = 0; i < num_found_flights; i++) {
-            printf("%d | %s | %s | %d | %d | $%.2f\n", foundFlights[i].flightId, foundFlights[i].destination, foundFlights[i].typeOfFlight, foundFlights[i].hrs, foundFlights[i].miles, foundFlights[i].price);
+            printf("%d  | %s | %s | %s | %d | %d | $%.2f\n", foundFlights[i].flightId,  foundFlights[i].origin, foundFlights[i].destination, foundFlights[i].typeOfFlight, foundFlights[i].hrs, foundFlights[i].miles, foundFlights[i].price);
         }
+    } else {
+        printf("We apologize but the Flight you want is not available");
+    }
 
         printf("End of search flights function\n");
 }
@@ -215,78 +228,13 @@ void searchFlights(Flight flights[], int *num_flights) {
 /* Potential List: customer
 1. Make a new file to save the users selected flight or flights.
 2. Fix the looping issue so it doesn't go back to main menu immediately after search flights function.
-3. Add more options to do things with the searched flights without having to go back to the main menu.
+3. Add more options to do things  with the searched flights without having to go back to the main menu.
 4. Add function in main menu for user to finalize what flight they want.
 5. I think the search flights function should be part of a bunch of options called in the book flights option that may or may not execute after one another.
+
 6. Add a function that allows user to book and save more than one flight.
 7. add a function that allows flights to be marked as reserved or available.
+8. Add a reserve flughts option
+9.
 */
-
-//Add more options later
-void displayMenu(int userType) {
-    int option;
-    do{
-        switch (userType)
-        {
-        case 1: //Agent
-            printf("Main Menu\n");
-            printf("Hello Agent.\n");
-            printf("Main Menu Options:\n");
-            printf("1. Manage Routes\n");
-            printf("2. Manage Flights\n");
-            printf("3. Quit\n");
-            printf("Please Select an Option: ");
-            scanf("%d", &option);
-            selectOption(userType, option);
-            break;
-        case 2: //Customer
-            printf("Main Menu\n");
-            printf("Hello Dear Customer.\n");
-            printf("Main Menu Options:\n");
-            printf("1. Book Reservations\n");
-            printf("2. Book Vehicle\n");
-            printf("3. Quit\n");
-            printf("Please Select an Option: ");
-            scanf("%d", &option);
-            selectOption(userType, option);
-            break;
-        default:
-            while(userType != 1 && userType != 2) {
-                printf("You Entered an Invalid option\n");
-                getUserType(&userType);
-                displayMenu(userType);
-            }
-            break;
-        }
-    } while (option < 3);
-}
-
-void selectOption(int userType, int option) {
-    if(userType == 1) { //Agent
-        switch (option) {
-        case 1:
-            printf("Agent option 1 - ManageRoutes");
-            //call ManageROutes function.
-            break;
-        case 2:
-            printf("Agent option 2 - ManageFLights");
-            //call Manage Flights Function.
-            break;
-        //Think about adding a default.
-        }
-    }
-    if(userType == 2) {
-        switch (option) {
-        case 1:
-            printf("Customer Option 1 - book reservations");
-            //call bookReservations Function
-            break;
-        case 2:
-            printf("customer option 2 - book flight");
-            //call book flights Function.
-            break;
-        //Think about adding a default.
-        }
-    }
-}
 
