@@ -1,5 +1,4 @@
-TX, passenger, 3, 450, 9329
-Win, passenger, 4, 686, 383
-TX, cargo, 67, 576, 383
-TX, cargo, 44554, 4483, 4214.02
-TX, pass, 3324, 44585, 41909.90
+1, SAN, DC, passenger, 34, 333, 313.02
+2, WIN, SAN, passenger, 4, 556, 522.64
+3, SAN, ATL, cargo, 3, 445, 418.30
+4, DC, ATL, passenger, 3, 383, 360.02
