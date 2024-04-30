@@ -2,3 +2,6 @@
 2, WIN, SAN, passenger, 4, 556, 522.64
 3, SAN, ATL, cargo, 3, 445, 418.30
 4, DC, ATL, passenger, 3, 383, 360.02
+5, HOU, DC, cargo, 4, 343, 322.42
+6, CHI, DAL, passenger, 5, 696, 654.24
+7, MAT, NAO, cargo, 4, 454, 426.76
