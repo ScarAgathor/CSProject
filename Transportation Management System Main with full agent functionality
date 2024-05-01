@@ -26,9 +26,11 @@ void addFlights(Flight flights[], int *num_flights);
 void editFlights(Flight flights[], int *num_flights);
 void deleteFlights(Flight flights[], int *num_flights);
 void searchFlights(Flight flights[], int *num_flights);
-void readFlightsFromFile(Flight flights[], int *num_flights);
-void writeFlightsToFile(Flight flights[], int *num_flights);
-void appendFlightsToFile(Flight flights[], int *num_flights);
+void reserveFlights(Flight flights[], int *num_flights);
+void userDelete(Flight flights[], int* num_flights, int delete);
+void readFlightsFromFile(Flight flights[], int *num_flights, char filename[]);
+void writeFlightsToFile(Flight flights[], int *num_flights, char filename[]);
+void appendFlightsToFile(Flight flights[], int *num_flights, char filename[]);
 void printFlights(Flight flights[], int *num_flights);
 
 int main() {
@@ -49,7 +51,6 @@ void getUserType(int* userType) {
     scanf("%d", userType);
 }
 
-//Add more options later
 void displayMenu(int userType) {
     int option;
     do{
@@ -104,7 +105,7 @@ void selectOption(int userType, int option) {
             editFlights(flights, &num_flights);
             break;
         case 3: 
-            printf("Delete Available Flights");
+            printf("Delete Available Flights\n");
             deleteFlights(flights, &num_flights);
             break;
         }
@@ -114,7 +115,6 @@ void selectOption(int userType, int option) {
         case 1:
             printf("Reserve Available Flights");
             searchFlights(flights, &num_flights);
-           // reserveFlights
             break;
         //case 1:
             //searchFlights(flights, &num_flights);
@@ -181,11 +181,19 @@ void addFlights(Flight flights[], int *num_flights) {
     }   while (strcmp(decision, "yes") == 0);
         
     // append flights data to the file
-    appendFlightsToFile(flights, num_flights);
+
+    
+    appendFlightsToFile(flights, num_flights, filename);    
+    readFlightsFromFile(flights, num_flights, filename);
+    printFlights(flights, num_flights);
+
+    //fix the printing function here
 }
 
 void editFlights(Flight flights[], int *num_flights) {
-    readFlightsFromFile(flights, num_flights);
+
+    char filename[] = "flights.txt";
+    readFlightsFromFile(flights, num_flights, filename);
     printFlights(flights, num_flights);
 
     int editFlight;
@@ -225,20 +233,19 @@ void editFlights(Flight flights[], int *num_flights) {
     }
 
     printFlights(flights, num_flights);
-    writeFlightsToFile(flights, num_flights);
+    writeFlightsToFile(flights, num_flights, filename);
 }
 
 void deleteFlights(Flight flights[], int *num_flights) {
-    readFlightsFromFile(flights, num_flights);
+    char filename[] = "flights.txt";
+    readFlightsFromFile(flights, num_flights, filename);
     printFlights(flights, num_flights);
-
-    int deleteFlight;
-
+    int delete;
     printf("Select Flight Id to Delete: ");
-    scanf("%d", &deleteFlight);
+    scanf("%d", &delete);
 
     for(int i = 0; i < *num_flights; i++) {
-        if(flights[i].flightId == deleteFlight) {
+        if(flights[i].flightId == delete) {
             for(int j = i; j < *num_flights; j++) {
                 flights[j].flightId = flights[j].flightId;
                 strcpy(flights[j].origin, flights[j+1].origin);
@@ -254,12 +261,13 @@ void deleteFlights(Flight flights[], int *num_flights) {
     }
 
     printFlights(flights, num_flights);
-    writeFlightsToFile(flights, num_flights);
+    writeFlightsToFile(flights, num_flights, filename);
 
 }
 
 void searchFlights(Flight flights[], int *num_flights) {
-    readFlightsFromFile(flights, num_flights);
+    char filename[] = "flights.txt";
+    readFlightsFromFile(flights, num_flights, filename);
 
     Flight foundFlights[MAX_FLIGHTS];
     char userOrigin[10];
@@ -274,7 +282,7 @@ void searchFlights(Flight flights[], int *num_flights) {
 
     for(int i = 0; i < *num_flights; i++) { //searching for flights that match the criteria and filling up thew found flights array
         if ((strcmp(flights[i].origin, userOrigin) == 0) || (strcmp(flights[i].destination, userDest) == 0)) {
-            foundFlights[num_found_flights].flightId = num_found_flights + 1;
+            foundFlights[num_found_flights].flightId = flights[i].flightId;
             strcpy(foundFlights[num_found_flights].origin, flights[i].origin);
             strcpy(foundFlights[num_found_flights].destination, flights[i].destination);
             strcpy(foundFlights[num_found_flights].typeOfFlight, flights[i].typeOfFlight);
@@ -290,10 +298,61 @@ void searchFlights(Flight flights[], int *num_flights) {
     } else {
         printf("We apologize but the Flight you want is not available");
     }
+
+    reserveFlights(flights, num_flights);
 }
 
-void readFlightsFromFile(Flight flights[], int *num_flights) {
-    char filename[] = "flights.txt";
+void reserveFlights(Flight flights[], int *num_flights) {
+    Flight reservedFlights[MAX_FLIGHTS];
+    int num_reserved_flights = 0;
+    int userReserve;
+    int currentMaxFlightId = 0;
+
+    char filename[] = "UsersFlights.txt";
+    FILE *file = fopen(filename, "r");
+
+    if (file == NULL) {
+        printf("Error opening file %s.\n", filename);
+        exit(1);
+    }
+
+    char line[100];
+    while (fgets(line, sizeof(line), file) != NULL) {
+        currentMaxFlightId++;
+    }
+    fclose(file);
+
+    printf("Enter ID of flight that you want to reserve: ");
+    scanf("%d", &userReserve);
+
+    for(int i = 0; i < *num_flights; i++) {
+        if(flights[i].flightId == userReserve) {
+            reservedFlights[num_reserved_flights].flightId = currentMaxFlightId + 1;
+            strcpy(reservedFlights[num_reserved_flights].origin, flights[i].origin);
+            strcpy(reservedFlights[num_reserved_flights].destination, flights[i].destination); 
+            strcpy(reservedFlights[num_reserved_flights].typeOfFlight, flights[i].typeOfFlight);
+            reservedFlights[num_reserved_flights].hrs = flights[i].hrs;
+            reservedFlights[num_reserved_flights].miles = flights[i].miles;
+            reservedFlights[num_reserved_flights].price = flights[i].price;
+            num_reserved_flights += 1;
+        }
+    }
+
+   // printf(num_reserved_flights);
+    appendFlightsToFile(reservedFlights, &num_reserved_flights, filename);
+    num_reserved_flights = 0;
+    readFlightsFromFile(reservedFlights, &num_reserved_flights, filename);
+    printFlights(reservedFlights, &num_reserved_flights);
+
+
+    //userDelete(flights, num_flights, userReserve);
+}
+
+void userDelete(Flight flights[], int *num_flights, int delete) {
+
+}
+
+void readFlightsFromFile(Flight flights[], int *num_flights, char filename[]) {
     FILE *file = fopen(filename, "r");
 
     if (file == NULL) {
@@ -323,8 +382,7 @@ void readFlightsFromFile(Flight flights[], int *num_flights) {
     fclose(file);
 }
 
-void writeFlightsToFile(Flight flights[], int *num_flights) {
-    char filename[] = "flights.txt";
+void writeFlightsToFile(Flight flights[], int *num_flights, char filename[]) {
     FILE *file = fopen(filename, "w");
 
     if (file == NULL) {
@@ -338,8 +396,7 @@ void writeFlightsToFile(Flight flights[], int *num_flights) {
     fclose(file);
 }
 
-void appendFlightsToFile(Flight flights[], int *num_flights) {
-    char filename[] = "flights.txt";
+void appendFlightsToFile(Flight flights[], int *num_flights, char filename[]) {
     FILE *file = fopen(filename, "a");
 
     if (file == NULL) {
@@ -363,6 +420,7 @@ void printFlights(Flight flights[], int *num_flights) {
 
 /* Potential List: Agent
 1. Fix the looping issue so it doesn't go back to main menu immediately after add flights function.
+2. consider a function that allows agent to delete a user reserved flight.
 */
 
 /* Potential List: customer
@@ -375,6 +433,4 @@ void printFlights(Flight flights[], int *num_flights) {
 7. add a function that allows flights to be marked as reserved or available.
 8. Add a reserve flights option
 9.for reserve function, decide btw giving found flights a new id or just using old id.
-*/
-
 
