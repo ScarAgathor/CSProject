@@ -442,11 +442,28 @@ void cancelReservations(Flight flights[], int *num_flights) {//This function all
 }
 
 void printReceipts(Flight flights[], int *num_flights) {
+    Flight bookedFlights[MAX_FLIGHTS];
     char filename[] = "UsersFlights.txt";
-    char bookedFlights[] = "bookedFlights";
+    char bookedFlightsFile[MAX_STR_LEN] = "bookedFlights";
     readFlightsFromFile(flights, num_flights, filename);
     printFlights(flights, num_flights);
 
+    int currentMaxFlightId = 0;
+
+    FILE *file = fopen(bookedFlightsFile, "r");
+
+    if (file == NULL) {
+        printf("Error opening file %s.\n", filename);
+        exit(1);
+    }
+
+    char line[100];
+    while (fgets(line, sizeof(line), file) != NULL) {
+        currentMaxFlightId++;
+    }
+    fclose(file);
+
+    int num_booked_flight = 1;
     int confirmedFlight;
     char decision[5];
 
@@ -481,6 +498,13 @@ void printReceipts(Flight flights[], int *num_flights) {
                 printf("| Total Price:\t$%.2f\t\t\n", total_price);
                 printf("|-------------------------------\n");  
                 printf("Booking confirmed.");  
+                bookedFlights[0].flightId = currentMaxFlightId + 1;
+                strcpy(bookedFlights[0].origin, flights[i].origin);
+                strcpy(bookedFlights[0].destination, flights[i].destination); 
+                strcpy(bookedFlights[0].typeOfFlight, flights[i].typeOfFlight);
+                bookedFlights[0].hrs = flights[i].hrs;
+                bookedFlights[0].miles = flights[i].miles;
+                bookedFlights[0].price = total_price;
                 for(int j = i; j < *num_flights; j++) {
                     flights[j].flightId = flights[j].flightId;
                     strcpy(flights[j].origin, flights[j+1].origin);
@@ -495,7 +519,7 @@ void printReceipts(Flight flights[], int *num_flights) {
         }   
     }
     writeFlightsToFile(flights, num_flights, filename);
-    appendFlightsToFile(flights, num_flights, bookedFlights);
+    appendFlightsToFile(bookedFlights, &num_booked_flight, bookedFlightsFile);
 }
 
 void readFlightsFromFile(Flight flights[], int *num_flights, char filename[]) {//This function reads the flights from whatever flight file the user wishes
@@ -563,6 +587,9 @@ void printFlights(Flight flights[], int *num_flights) {//This function prints th
     for(int i = 0; i < *num_flights; i++) {
         printf("| %d\t|   %s\t\t|   %s\t\t|  %s\t| %d\t| %d\t| $%.2f\t|\n", flights[i].flightId,  flights[i].origin, flights[i].destination, flights[i].typeOfFlight, flights[i].hrs, flights[i].miles, flights[i].price);
     }
+    printf("|---------------------------------------------------------------------------------------|\n");
+}
+
     printf("|---------------------------------------------------------------------------------------|\n");
 }
 
