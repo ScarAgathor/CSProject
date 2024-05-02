@@ -1,0 +1,7 @@
+1, WIN, SAN, passenger, 4, 556, 522.64
+2, DC, NY, cargo, 2, 456, 428.64
+3, SAN, IDA, passenger, 3, 303, 284.82
+4, DAL, BOS, passenger, 3, 495, 465.30
+5, WIS, BOS, cargo, 4, 232, 218.08
+6, SAN, ATL, passenger, 3, 2834, 2663.96
+7, SAN, HOU, passenger, 2, 334, 313.96
