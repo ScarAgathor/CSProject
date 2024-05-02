@@ -1,10 +1,14 @@
 //Add a description here and other stuff
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #define MAX_FLIGHTS 100
 #define MAX_STR_LEN 50
 #define PRICE_PER_MILE 0.94
+#define TAX_RATE 0.25
+#define BOOKING_FEE 14.00
 
 typedef struct {//This struct defines the characteristics of every flight.
     int flightId;
@@ -155,7 +159,7 @@ void addFlights(Flight flights[], int *num_flights) {//This function allows the 
         scanf("%s", origin);
         printf("Enter Flight Destination (Just the first three or two letters in all caps): ");
         scanf("%s", destination);
-        printf("Enter type of flight (Passenger or Cargo): ");
+        printf("Enter type of flight (passenger or cargo): ");
         scanf("%s", typeOfFlight);
         printf("Enter Total Flight Time: ");
         scanf("%d", &hrs);
@@ -413,7 +417,7 @@ void cancelReservations(Flight flights[], int *num_flights) {//This function all
             }
         }
     } else if(strcasecmp(decision, "no") == 0) {
-        printf("close attempt to cancel reservation");
+        printf("Successfully closed attempt to cancel reservation");
         return;
     }
     printf("\t\t\t\tRESERVED FLIGHTS\n");
@@ -427,8 +431,41 @@ void printReceipts(Flight flights[], int *num_flights) {
     readFlightsFromFile(flights, num_flights, filename);
     printFlights(flights, num_flights);
 
-    int confirmedFlight[MAX_FLIGHTS];
-    
+    int confirmedFlight;
+    char decision[5];
+
+    printf("Please enter the id of the booking you wish to confirm: ");
+    scanf("%d", &confirmedFlight);
+
+    printf("Are you sure you want to confirm this booking (yes or no): ");
+    scanf("%s", decision);
+
+    if(strcasecmp(decision, "yes") == 0) {
+        for(int i = 0; i < *num_flights;i++) {
+            if(flights[i].flightId == confirmedFlight) {
+                float tax = (float)TAX_RATE * flights[i].price;
+                float total_price = flights[i].price + tax+ BOOKING_FEE;
+                printf("     Plane Ticket Purchase\n");
+                printf("  Flight Type: %s Flight\t\n", flights[i].typeOfFlight);
+                printf("|-------------------------------|\n");
+                printf("| Flight Details                |\n");
+                printf("|-------------------------------|\n");
+                
+                printf("| From:\t%s\t\t\t|\n", flights[i].origin);
+                printf("| To:  \t%s\t\t\t|\n", flights[i].destination);
+                printf("| Status: Ticketed              |\n");
+                printf("|-------------------------------|\n");
+                printf("| Flight Price                  |\n");
+                printf("|-------------------------------|\n");
+                printf("| Base Fare: \t$%.2f\t\t|\n", flights[i].price);
+                printf("| Tax: \t\t$%.2f\t\t|\n", tax);
+                printf("| Booking fee: \t$%.2f\t\t|\n", BOOKING_FEE);
+                printf("|-------------------------------|\n");
+                printf("| Total Price: $%.2f\t\t|\n", total_price);
+                printf("|-------------------------------|\n");    
+            }   
+        }   
+    }
 }
 
 void readFlightsFromFile(Flight flights[], int *num_flights, char filename[]) {//This function reads the flights from whatever flight file the user wishes
@@ -501,10 +538,7 @@ void printFlights(Flight flights[], int *num_flights) {//This function printf th
 
 
 /* Potential List: Agent
-2. consider a function that allows agent to delete a user reserved flight.
 3. add a thing that converts the agents input into capital letters for destination and origin
+4. specify what inputs should look like in add flights function
 */
 
-/* Potential List: customer
-
-*/
