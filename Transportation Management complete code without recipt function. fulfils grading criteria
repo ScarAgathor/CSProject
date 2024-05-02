@@ -1,4 +1,4 @@
-//Add a description here and other stuff
+//This program is a Transport Companies'  Management system that specializes in local flights. The program allows the user to perform various options on the flights after checking if they after an admin or a customer. The program also updates files to store or delete flights based on what the user's current needs are.
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,6 +24,7 @@ void getUserType(int* userType);
 void displayMenu(int userType);
 void selectOption(int userType, int option);
 void addFlights(Flight flights[], int *num_flights);
+void toUpper(char string[]);
 void editFlights(Flight flights[], int *num_flights);
 void deleteFlights(Flight flights[], int *num_flights);
 void searchFlights(Flight flights[], int *num_flights);
@@ -145,9 +146,9 @@ void selectOption(int userType, int option) {//This function controls the differ
 void addFlights(Flight flights[], int *num_flights) {//This function allows the admin to add flights and save them in the main flights file.
     char filename[] = "flights.txt";
     readFlightsFromFile(flights, num_flights, filename);
-    char origin[100];
-    char destination[100];
-    char typeOfFlight[100];
+    char origin[MAX_STR_LEN];
+    char destination[MAX_STR_LEN];
+    char typeOfFlight[MAX_STR_LEN];
     int hrs;
     int miles;
     float price;
@@ -155,20 +156,23 @@ void addFlights(Flight flights[], int *num_flights) {//This function allows the 
 
     do
     {
-        printf("Enter Flight Origin(Just the first three or two letters in all caps): ");
+        printf("Enter Flight Origin(The First Two or Three Letters): ");
         scanf("%s", origin);
-        printf("Enter Flight Destination (Just the first three or two letters in all caps): ");
+        printf("Enter Flight Destination (The First Two or three Letters): ");
         scanf("%s", destination);
         printf("Enter type of flight (passenger or cargo): ");
         scanf("%s", typeOfFlight);
-        printf("Enter Total Flight Time: ");
+        printf("Enter Total Flight Time (hours): ");
         scanf("%d", &hrs);
-        printf("Enter Total Flight distance: ");
+        printf("Enter Total Flight distance (miles): ");
         scanf("%d", &miles);
 
         flights[*num_flights].flightId = *num_flights + 1;
+        toUpper(origin);
         strcpy(flights[*num_flights].origin, origin);
-        strcpy(flights[*num_flights].destination, destination); 
+        toUpper(destination);
+        strcpy(flights[*num_flights].destination, destination);
+        toUpper(typeOfFlight); 
         strcpy(flights[*num_flights].typeOfFlight, typeOfFlight);
         flights[*num_flights].hrs = hrs;
         flights[*num_flights].miles = miles;
@@ -185,6 +189,14 @@ void addFlights(Flight flights[], int *num_flights) {//This function allows the 
     printFlights(flights, num_flights);
 }
 
+void toUpper(char string[]) {//converts strings to all caps
+    for(int i = 0; string[i] != '\0'; i++) {
+        if(string[i] >= 'a' && string[i] <= 'z') {
+            string[i] = string[i] - 32;
+        }
+    }
+}
+
 void editFlights(Flight flights[], int *num_flights) {//This function allows the admin to edit flights in the main flights file.
     char filename[] = "flights.txt";
     readFlightsFromFile(flights, num_flights, filename);
@@ -198,26 +210,29 @@ void editFlights(Flight flights[], int *num_flights) {//This function allows the
     for(int i = 0; i < *num_flights; i++) {
         if(flights[i].flightId == editFlight) {
             char origin[MAX_STR_LEN];
-            char destination[100];
-            char typeOfFlight[100];
+            char destination[MAX_STR_LEN];
+            char typeOfFlight[MAX_STR_LEN];
             int hrs;
             int miles;
             float price;
 
-            printf("Enter New FLight Origin (Just the first three or two letters in all caps): ");
+            printf("Enter New FLight Origin (The First Two or Three Letters): ");
             scanf("%s", origin);
-            printf("Enter New Flight Destination (Just the first three or two letters in all caps): ");
+            printf("Enter New Flight Destination (The First Two or Three Letters): ");
             scanf("%s", destination);
             printf("Enter type of flight (passenger or cargo): ");
             scanf("%s", typeOfFlight);
-            printf("Enter Total Flight Time: ");
+            printf("Enter Total Flight Time (hours): ");
             scanf("%d", &hrs);
-            printf("Enter Total Flight Distance: ");
+            printf("Enter Total Flight Distance (miles): ");
             scanf("%d", &miles);
 
             flights[i].flightId = editFlight;
+            toUpper(origin);
             strcpy(flights[i].origin, origin);
+            toUpper(destination);
             strcpy(flights[i].destination, destination); 
+            toUpper(typeOfFlight);
             strcpy(flights[i].typeOfFlight, typeOfFlight);
             flights[i].hrs = hrs;
             flights[i].miles = miles;
@@ -428,6 +443,7 @@ void cancelReservations(Flight flights[], int *num_flights) {//This function all
 
 void printReceipts(Flight flights[], int *num_flights) {
     char filename[] = "UsersFlights.txt";
+    char bookedFlights[] = "bookedFlights";
     readFlightsFromFile(flights, num_flights, filename);
     printFlights(flights, num_flights);
 
@@ -445,27 +461,41 @@ void printReceipts(Flight flights[], int *num_flights) {
             if(flights[i].flightId == confirmedFlight) {
                 float tax = (float)TAX_RATE * flights[i].price;
                 float total_price = flights[i].price + tax+ BOOKING_FEE;
-                printf("     Plane Ticket Purchase\n");
-                printf("  Flight Type: %s Flight\t\n", flights[i].typeOfFlight);
-                printf("|-------------------------------|\n");
-                printf("| Flight Details                |\n");
-                printf("|-------------------------------|\n");
-                
-                printf("| From:\t%s\t\t\t|\n", flights[i].origin);
-                printf("| To:  \t%s\t\t\t|\n", flights[i].destination);
-                printf("| Status: Ticketed              |\n");
-                printf("|-------------------------------|\n");
-                printf("| Flight Price                  |\n");
-                printf("|-------------------------------|\n");
-                printf("| Base Fare: \t$%.2f\t\t|\n", flights[i].price);
-                printf("| Tax: \t\t$%.2f\t\t|\n", tax);
-                printf("| Booking fee: \t$%.2f\t\t|\n", BOOKING_FEE);
-                printf("|-------------------------------|\n");
-                printf("| Total Price: $%.2f\t\t|\n", total_price);
-                printf("|-------------------------------|\n");    
+                printf("       PLANE TICKET PURCHASE\n");
+                printf("|-------------------------------\n");
+                printf("|    Flight Details             \n");
+                printf("|-------------------------------\n");
+                printf("| %s FLIGHT\t\n", flights[i].typeOfFlight);
+                printf("| From:       \t%s\n", flights[i].origin);
+                printf("| To:         \t%s\n", flights[i].destination);
+                printf("| Time:       \t%d Hours\n", flights[i].hrs);
+                printf("| Distance:   \t%d Miles\n", flights[i].miles);
+                printf("| Status:     \tTicketed\n");
+                printf("|-------------------------------\n");
+                printf("| Flight Price                  \n");
+                printf("|-------------------------------\n");
+                printf("| Base Fare:  \t$%.2f\n", flights[i].price);
+                printf("| Tax:        \t$%.2f\t\t\n", tax);
+                printf("| Booking fee:\t$%.2f\t\t\n", BOOKING_FEE);
+                printf("|-------------------------------\n");
+                printf("| Total Price:\t$%.2f\t\t\n", total_price);
+                printf("|-------------------------------\n");  
+                printf("Booking confirmed.");  
+                for(int j = i; j < *num_flights; j++) {
+                    flights[j].flightId = flights[j].flightId;
+                    strcpy(flights[j].origin, flights[j+1].origin);
+                    strcpy(flights[j].destination, flights[j+1].destination); 
+                    strcpy(flights[j].typeOfFlight, flights[j+1].typeOfFlight);
+                    flights[j].hrs = flights[j+1].hrs;
+                    flights[j].miles = flights[j+1].miles;
+                    flights[j].price = flights[j+1].price;
+                }
+                *num_flights -= 1;
             }   
         }   
     }
+    writeFlightsToFile(flights, num_flights, filename);
+    appendFlightsToFile(flights, num_flights, bookedFlights);
 }
 
 void readFlightsFromFile(Flight flights[], int *num_flights, char filename[]) {//This function reads the flights from whatever flight file the user wishes
@@ -526,7 +556,7 @@ void appendFlightsToFile(Flight flights[], int *num_flights, char filename[]) {/
     fclose(file);
 }
 
-void printFlights(Flight flights[], int *num_flights) {//This function printf the flights of what ever file the user is currently in aa a table.
+void printFlights(Flight flights[], int *num_flights) {//This function prints the flights of what ever file the user wishes  in a table.
     printf("|---------------------------------------------------------------------------------------|\n");
     printf("| Id\t|   Origin\t|  Destination  |  Flight Type\t| Hours\t| Miles\t| Price\t\t|\n");
     printf("|-------|---------------|---------------|---------------|-------|-------|---------------|\n");
@@ -536,9 +566,4 @@ void printFlights(Flight flights[], int *num_flights) {//This function printf th
     printf("|---------------------------------------------------------------------------------------|\n");
 }
 
-
-/* Potential List: Agent
-3. add a thing that converts the agents input into capital letters for destination and origin
-4. specify what inputs should look like in add flights function
-*/
 
